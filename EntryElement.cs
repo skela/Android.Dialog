@@ -16,12 +16,14 @@ namespace Android.Dialog
             {
                 if (_entry != null && _val != value)
                 {
+					_val = value;
                     if (_entry.Text != value)
                         _entry.Text = value;
                     if (Changed != null)
                         Changed(this, EventArgs.Empty);
                 }
-                _val = value;
+				else
+					_val = value;
             }
         }
 
