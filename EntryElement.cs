@@ -51,8 +51,6 @@ namespace Android.Dialog
         }
 
         public bool Password { get; set; }
-        public bool IsEmail { get; set; }
-        public bool Numeric { get; set; }
         public string Hint { get; set; }
         public int Lines { get; set; }
 
@@ -83,15 +81,19 @@ namespace Android.Dialog
                 //_entry.EditorAction += new EventHandler<TextView.EditorActionEventArgs>(_entry_EditorAction);
                 _entry.ImeOptions = ImeAction.Unspecified;
 
-                if (Numeric)
-                    _entry.InputType = InputTypes.ClassNumber | InputTypes.NumberFlagDecimal | InputTypes.NumberFlagSigned;
-                else if (IsEmail)
-                    _entry.InputType = InputTypes.TextVariationEmailAddress | InputTypes.ClassText;
-                else
-                    _entry.InputType = InputTypes.ClassText;
+				switch (KeyboardType)
+				{
+					case UIKeyboardType.DecimalPad: _entry.InputType = InputTypes.ClassNumber | InputTypes.NumberFlagDecimal; break;
+					case UIKeyboardType.NumberPad: _entry.InputType = InputTypes.ClassNumber; break;
+					case UIKeyboardType.PhonePad: _entry.InputType = InputTypes.ClassPhone; break;
+					case UIKeyboardType.NamePhonePad: _entry.InputType = InputTypes.TextVariationPersonName | InputTypes.ClassText; break;
+					case UIKeyboardType.ASCIICapable: _entry.InputType = InputTypes.TextVariationNormal | InputTypes.ClassText; break;
+					case UIKeyboardType.NumbersAndPunctuation: _entry.InputType = InputTypes.ClassText; break;
+					case UIKeyboardType.EmailAddress: _entry.InputType = InputTypes.TextVariationEmailAddress | InputTypes.ClassText; break;
+				}
 
-                if (Password)
-                    _entry.InputType |= InputTypes.TextVariationPassword;
+				if (Password)
+					_entry.InputType |= InputTypes.TextVariationPassword;
 
                 if (Lines > 1)
                 {
