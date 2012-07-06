@@ -18,14 +18,14 @@ namespace Android.Dialog
                 {
                     if (_entry.Text != value)
                         _entry.Text = value;
-                    if (ValueChanged != null)
-                        ValueChanged(this, EventArgs.Empty);
+                    if (Changed != null)
+                        Changed(this, EventArgs.Empty);
                 }
                 _val = value;
             }
         }
 
-        public event EventHandler ValueChanged;
+        public event EventHandler Changed;
 
         public EntryElement(string caption, string value)
             : this(caption, value, (int)DroidResources.ElementLayout.dialog_textfieldright)
@@ -58,7 +58,7 @@ namespace Android.Dialog
         /// An action to perform when Enter is hit
         /// </summary>
         /// <remarks>This is only meant to be set if this is the last field in your RootElement, to allow the Enter button to be used for submitting the form data.<br>
-        /// If you want to perform an action when the text changes, consider hooking into ValueChanged instead.</remarks>
+        /// If you want to perform an action when the text changes, consider hooking into Changed instead.</remarks>
         public Action Send { get; set; }
 
         protected EditText _entry;
@@ -70,7 +70,15 @@ namespace Android.Dialog
             var view = DroidResources.LoadStringEntryLayout(context, convertView, parent, LayoutId, out label, out _entry);
             if (view != null)
             {
-                // Warning! Crazy ass hack ahead!
+				view.FocusableInTouchMode = false;
+				view.Focusable = false;
+				view.Clickable = false;
+
+				_entry.FocusableInTouchMode = true;
+				_entry.Focusable = true;
+				_entry.Clickable = true;					 
+
+				// Warning! Crazy ass hack ahead!
                 // since we can't know when out convertedView was was swapped from inside us, we store the
                 // old textwatcher in the tag element so it can be removed!!!! (barf, rech, yucky!)
                 if (_entry.Tag != null)
@@ -79,7 +87,17 @@ namespace Android.Dialog
                 _entry.Text = Value;
                 _entry.Hint = Hint;
                 //_entry.EditorAction += new EventHandler<TextView.EditorActionEventArgs>(_entry_EditorAction);
-                _entry.ImeOptions = ImeAction.Unspecified;
+                
+				//_entry.ImeOptions = ImeAction.Unspecified;
+				switch (ReturnKeyType)
+				{
+					case UIReturnKeyType.Default: _entry.ImeOptions = ImeAction.Unspecified; break;
+					case UIReturnKeyType.Done: _entry.ImeOptions = ImeAction.Done; break;
+					case UIReturnKeyType.Go: _entry.ImeOptions = ImeAction.Go; break;
+					case UIReturnKeyType.Next: _entry.ImeOptions = ImeAction.Next; break;
+					case UIReturnKeyType.Search: _entry.ImeOptions = ImeAction.Search; break;
+					case UIReturnKeyType.Send: _entry.ImeOptions = ImeAction.Send; break;
+				}
 
 				switch (KeyboardType)
 				{
@@ -87,8 +105,8 @@ namespace Android.Dialog
 					case UIKeyboardType.NumberPad: _entry.InputType = InputTypes.ClassNumber; break;
 					case UIKeyboardType.PhonePad: _entry.InputType = InputTypes.ClassPhone; break;
 					case UIKeyboardType.NamePhonePad: _entry.InputType = InputTypes.TextVariationPersonName | InputTypes.ClassText; break;
-					case UIKeyboardType.ASCIICapable: _entry.InputType = InputTypes.TextVariationNormal | InputTypes.ClassText; break;
-					case UIKeyboardType.NumbersAndPunctuation: _entry.InputType = InputTypes.ClassText; break;
+					case UIKeyboardType.ASCIICapable: _entry.InputType = InputTypes.TextVariationVisiblePassword | InputTypes.ClassText; break;
+					case UIKeyboardType.NumbersAndPunctuation: _entry.InputType = InputTypes.TextVariationVisiblePassword | InputTypes.ClassText; break;
 					case UIKeyboardType.EmailAddress: _entry.InputType = InputTypes.TextVariationEmailAddress | InputTypes.ClassText; break;
 				}
 
@@ -166,13 +184,6 @@ namespace Android.Dialog
 
 		#region MonoTouch Dialog Mimicry
 
-		public UITextFieldViewMode ClearButtonMode
-        {
-            get { return clearButtonMode; }
-            set { clearButtonMode = value; }
-        }
-        private UITextFieldViewMode clearButtonMode;
-
 		public UIKeyboardType KeyboardType
         {
             get { return keyboardType; }
@@ -186,6 +197,14 @@ namespace Android.Dialog
             set { returnKeyType = value; }
 		}
 		private UIReturnKeyType returnKeyType;
+
+		// Not used in any way, just there to match MT Dialog api.
+		public UITextFieldViewMode ClearButtonMode
+        {
+            get { return clearButtonMode; }
+            set { clearButtonMode = value; }
+        }
+        private UITextFieldViewMode clearButtonMode;
 
 		#endregion
     }
