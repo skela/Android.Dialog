@@ -143,6 +143,8 @@ namespace Android.Dialog
             return Value != null && Value.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1 || base.Matches(text);
         }
 
+		#region TextWatcher Android
+
         public void OnTextChanged(Java.Lang.ICharSequence s, int start, int before, int count)
         {
             Value = s.ToString();
@@ -157,5 +159,32 @@ namespace Android.Dialog
         {
             // nothing needed
         }
+
+		#endregion
+
+		#region MonoTouch Dialog Mimicry
+
+		public UITextFieldViewMode ClearButtonMode
+        {
+            get { return clearButtonMode; }
+            set { clearButtonMode = value; }
+        }
+        private UITextFieldViewMode clearButtonMode;
+
+		public UIKeyboardType KeyboardType
+        {
+            get { return keyboardType; }
+            set { keyboardType = value; }
+        }
+        private UIKeyboardType keyboardType;
+
+		public UIReturnKeyType ReturnKeyType
+		{
+			get { return returnKeyType; }
+            set { returnKeyType = value; }
+		}
+		private UIReturnKeyType returnKeyType;
+
+		#endregion
     }
 }
