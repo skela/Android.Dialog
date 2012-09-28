@@ -23,7 +23,7 @@ namespace MonoDroid.Dialog
 		{
 			this.context = context;
 			this.inflater = LayoutInflater.From(context);
-			this.Root = root;			
+			this.Root = root;
 		}
 
 		public RootElement Root
@@ -64,6 +64,8 @@ namespace MonoDroid.Dialog
 				foreach (var s in Root.Sections)
 					count += s.Adapter.Count + 1;
 
+				Console.WriteLine("Count is " + count);
+
 				return count;
 			}
 		}
@@ -72,6 +74,7 @@ namespace MonoDroid.Dialog
 		{
 			get
 			{
+				/*
 				//The headers count as a view type too
 				int viewTypeCount = 1;
 
@@ -79,7 +82,10 @@ namespace MonoDroid.Dialog
 				foreach (var s in Root.Sections)
 					viewTypeCount += s.Adapter.ViewTypeCount;
 
-				return viewTypeCount;
+				Console.WriteLine("ViewTypeCount is " + viewTypeCount);
+
+				return viewTypeCount;*/
+				return Count;
 			}
 		}
 
@@ -120,27 +126,41 @@ namespace MonoDroid.Dialog
 			return position;
 		}
 
+		//List<View>viewCache = new List<View>();
+
 		public override View GetView(int position, View convertView, ViewGroup parent)
 		{
-			int sectionIndex = 0;
+			//View v=null;
+			//int origPos = position;
+			//if (position<viewCache.Count)
+			//	return viewCache[position];
 
+			int sectionIndex = 0;
 			foreach (var s in Root.Sections)
 			{
 				if (s.Adapter.Context == null)
 					s.Adapter.Context = this.context;
 
 				if (position == 0)
+				{
+					//v=s.GetView(context, convertView, parent);
+					//break;
 					return s.GetView(context, convertView, parent);
-
+				}
 				int size = s.Adapter.Count + 1;
 
 				if (position < size)
+				{
+					//v=(s.Adapter.GetView(position - 1, convertView, parent));
+					//break;
 					return (s.Adapter.GetView(position - 1, convertView, parent));
-
+				}
 				position -= size;
 				sectionIndex++;
 			}
-
+			//if (v!=null)
+			//	viewCache.Insert(origPos,v);
+			//return v;
 			return null;
 		}
 	}
