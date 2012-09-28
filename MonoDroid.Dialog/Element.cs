@@ -72,5 +72,26 @@ namespace MonoDroid.Dialog
                 return false;
             return Caption.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1;
         }
+
+		#region MonoTouch Dialog Mimicry
+		
+		// Not used in any way, just there to match MT Dialog api.
+		public UITableViewCellAccessory Accessory
+		{
+			get { return accessory; }
+			set { accessory = value; }
+		}
+		private UITableViewCellAccessory accessory;
+
+		/// <summary>
+		/// Alternative alias to the click event, naming more like MonoTouch Dialog.
+		/// </summary>
+		public Action Tapped 
+		{ 
+			get { return Click; }
+			set { Click = value; }
+		}
+
+		#endregion
     }
 }
