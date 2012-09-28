@@ -30,19 +30,22 @@ namespace MonoDroid.Dialog
 
 		public event EventHandler Changed;
 
-		public EntryElement(string caption, string hint, string value)
-			: base(caption)
+		private void Init(string value,string hint,bool isPassword=false,UIKeyboardType keyboardType=UIKeyboardType.ASCIICapable)
 		{
 			Value = value;
 			this.hint = hint;
+			this.isPassword = isPassword;
+			KeyboardType = keyboardType;
 		}
 
-		public EntryElement(string caption, string hint, string value, bool isPassword)
-			: base(caption)
+		public EntryElement(string caption, string hint, string value,UIKeyboardType keyboardType=UIKeyboardType.ASCIICapable) : base(caption)
 		{
-			Value = value;
-			this.isPassword = isPassword;
-			this.hint = hint;
+			Init (value,hint,false,keyboardType);
+		}
+
+		public EntryElement(string caption, string hint, string value,bool isPassword,UIKeyboardType keyboardType=UIKeyboardType.ASCIICapable) : base(caption)
+		{
+			Init (value,hint,isPassword,keyboardType);
 		}
 
 		public override string Summary()

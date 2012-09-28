@@ -27,13 +27,27 @@ namespace DialogSampleApp
 									   new BooleanElement("Push my button", true),
                                        new BooleanElement("Push this too", false),
                                    },
+				/*
+							   new Section("Test Inputs")
+								{
+									new EntryElement("A caption","A hint","Some Text"),
+									new EntryElement("Some numbers","Some numbers","1337",UIKeyboardType.NumberPad),
+									new EntryElement("Some decimals","Some decimals","3.14",UIKeyboardType.DecimalPad),
+								},*/
                                new Section("Part II")
                                    {
                                        new StringElement("This is the String Element", "The Value"),
                                        new CheckboxElement("Check this out", true),
                                        new ImageElement(img),
 									   new HtmlElement("Go to Google.com","http://www.google.com")
-                                   }
+                                   },
+								new Section("Part III")
+								{
+									new StringElement("This is the String Element", "The Value"),
+									new CheckboxElement("Check this out", true),
+									//new ImageElement(img),
+									new HtmlElement("Go to Google.com","http://www.google.com")
+								}
                            };
 
             var da = new DialogAdapter(this, root);
