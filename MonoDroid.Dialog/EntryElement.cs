@@ -119,7 +119,7 @@ namespace MonoDroid.Dialog
 
 			var newValue = entry.Text.ToString();
 			var diff = newValue != Value;
-			Value = newValue;
+			val = newValue;
 
 			if (diff && Changed != null)
 			{
