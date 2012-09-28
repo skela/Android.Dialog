@@ -26,6 +26,8 @@ namespace MonoDroid.Dialog
 		private string hint;
 		private bool isPassword;
 		private EditText entry;
+		private RelativeLayout cell;
+		private TextView captionLabel;
 		private Context _context = null;
 
 		public event EventHandler Changed;
@@ -73,48 +75,56 @@ namespace MonoDroid.Dialog
 		public override View GetView(Context context, View convertView, ViewGroup parent)
 		{
             _context = context;
-			var cell = new RelativeLayout(context);
-
-			if (entry == null)
+			if (cell==null)
 			{
-				var _entry = new EditText(context)
-								 {
-									 Tag = 1,
-									 Hint = hint ?? "",
-									 Text = Value ?? "",
-								 };
+				cell = new RelativeLayout(context);
 
-				_entry.ImeOptions = MonoDroidDialogEnumHelper.ImeActionFromUIReturnKeyType(ReturnKeyType);
-				_entry.InputType = MonoDroidDialogEnumHelper.InputTypesFromUIKeyboardType(KeyboardType);
-
-				if(isPassword)
+				if (entry == null)
 				{
-					_entry.InputType = Android.Text.InputTypes.TextVariationPassword;
+					var _entry = new EditText(context)
+									 {
+										 Tag = 1,
+										 Hint = hint ?? "",
+										 Text = Value ?? "",
+									 };
+
+					_entry.ImeOptions = MonoDroidDialogEnumHelper.ImeActionFromUIReturnKeyType(ReturnKeyType);
+					_entry.InputType = MonoDroidDialogEnumHelper.InputTypesFromUIKeyboardType(KeyboardType);
+
+					if(isPassword)
+					{
+						_entry.InputType = Android.Text.InputTypes.TextVariationPassword;
+					}
+
+					entry = _entry;
+
+					entry.TextChanged += delegate
+					{
+						FetchValue();
+					};
 				}
+				var tvparams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent,
+															  ViewGroup.LayoutParams.WrapContent);
+				tvparams.SetMargins(5,3,5,0);
+	            tvparams.AddRule(LayoutRules.CenterVertical);
+	            tvparams.AddRule(LayoutRules.AlignParentLeft);
 
-				entry = _entry;
+				captionLabel = new TextView(context) {Text = Caption, TextSize = 16f};
 
-				entry.TextChanged += delegate
-				{
-					FetchValue();
-				};
+				var eparams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent,
+															  ViewGroup.LayoutParams.WrapContent);
+				eparams.SetMargins(5, 3, 5, 0);
+	            eparams.AddRule(LayoutRules.CenterVertical);
+	            eparams.AddRule(LayoutRules.AlignParentRight);
+
+				cell.AddView(captionLabel,tvparams);
+				cell.AddView(entry,eparams);
 			}
-			var tvparams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent,
-														  ViewGroup.LayoutParams.WrapContent);
-			tvparams.SetMargins(5,3,5,0);
-            tvparams.AddRule(LayoutRules.CenterVertical);
-            tvparams.AddRule(LayoutRules.AlignParentLeft);
-
-			var tv = new TextView(context) {Text = Caption, TextSize = 16f};
-
-			var eparams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent,
-														  ViewGroup.LayoutParams.WrapContent);
-			eparams.SetMargins(5, 3, 5, 0);
-            eparams.AddRule(LayoutRules.CenterVertical);
-            eparams.AddRule(LayoutRules.AlignParentRight);
-
-			cell.AddView(tv,tvparams);
-			cell.AddView(entry,eparams);
+			else
+			{
+				captionLabel.Text = Caption;
+				entry.Text = Value;
+			}
 			return cell;
 		}
 
@@ -139,6 +149,12 @@ namespace MonoDroid.Dialog
 			{
 				entry.Dispose();
 				entry = null;
+
+				captionLabel.Dispose ();
+				captionLabel = null;
+
+				cell.Dispose ();
+				cell = null;
 			}
 		}
 
