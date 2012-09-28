@@ -110,6 +110,9 @@ namespace MonoDroid.Dialog
 				checkbox.Dispose();
 				checkbox = null;
 
+				captionLabel.Dispose ();
+				captionLabel = null;
+
 				cell.Dispose ();
 				cell = null;
 			}
