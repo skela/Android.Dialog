@@ -3,7 +3,7 @@ using System;
 using Android.Text;
 using Android.Views.InputMethods;
 
-namespace MonoDroid.Dialog
+namespace Android.Dialog
 {
 	public enum UITableViewCellAccessory
 	{
