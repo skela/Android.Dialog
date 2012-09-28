@@ -16,7 +16,10 @@ namespace DialogSampleApp
 			
 			ImageView img = new ImageView(this);
 			img.SetImageResource(Resource.Drawable.spadeicon);
-			
+
+			var clickableElem = new StringElement("This is the String Element", "The Value");
+			clickableElem.Click=ClickedClickableElem;
+
             var root = new RootElement("Test Root Elem")
                            {
                                new Section("Test Header", "Test Footer")
@@ -43,17 +46,22 @@ namespace DialogSampleApp
                                    },
 								new Section("Part III")
 								{
-									new StringElement("This is the String Element", "The Value"),
+									clickableElem,									
 									new CheckboxElement("Check this out", true),
 									new HtmlElement("Go to Google.com","http://www.google.com")
 								}
                            };
 
-            var da = new DialogAdapter(this, root);
-
-            var lv = new ListView(this) {Adapter = da};
+			var lv = new ListView(this);
+			var da = new DialogAdapter(this, root,lv);
+			lv.Adapter = da;             
 
             SetContentView(lv);
         }
+
+		public void ClickedClickableElem ()
+		{
+			System.Console.WriteLine("I ClickedClickableElem");
+		}
     }
 }

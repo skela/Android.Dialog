@@ -17,13 +17,17 @@ namespace MonoDroid.Dialog
 		const int TYPE_SECTION_HEADER = 0;
 
 		Context context;
-		LayoutInflater inflater;
+		//LayoutInflater inflater;
 
-		public DialogAdapter(Context context, RootElement root)
+		public DialogAdapter(Context context, RootElement root,ListView listView=null)
 		{
 			this.context = context;
-			this.inflater = LayoutInflater.From(context);
+			//this.inflater = LayoutInflater.From(context);
 			this.Root = root;
+
+			// This is only really required when using a DialogAdapter with a ListView, in a non DialogActivity based activity.
+			if (listView!=null)
+				listView.ItemClick += ListView_ItemClick;
 		}
 
 		public RootElement Root
@@ -162,6 +166,56 @@ namespace MonoDroid.Dialog
 			//	viewCache.Insert(origPos,v);
 			//return v;
 			return null;
+		}
+
+		/// <summary>
+		/// Return the Element for the flattened/dereferenced position value.
+		/// </summary>
+		/// <param name="position">The direct index to the Element.</param>
+		/// <returns>The Element object at the specified position or null if too out of bounds.</returns>
+		public Element ElementAtIndex(int position)
+		{
+			int sectionIndex = 0;
+			foreach (var s in Root.Sections)
+			{
+				if (position == 0)
+					return Root.Sections[sectionIndex];
+				
+				// note: plus two for the section header and footer views
+				int size = s.Adapter.Count + 1;
+				if (position < size)
+					return Root.Sections[sectionIndex][position - 1];
+				position -= size;
+				sectionIndex++;
+			}
+			
+			return null;
+		}
+
+		/// <summary>
+		/// Handles the ItemClick event of the ListView control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="Android.Widget.AdapterView.ItemClickEventArgs"/> instance containing the event data.</param>
+		public void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+		{
+			var elem = ElementAtIndex(e.Position);
+			if (elem == null) return;
+			//elem.Selected();
+			if (elem.Click != null)
+				elem.Click();
+		}
+		
+		/// <summary>
+		/// Handles the ItemLongClick event of the ListView control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="Android.Widget.AdapterView.ItemLongClickEventArgs"/> instance containing the event data.</param>
+		public void ListView_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
+		{
+			var elem = ElementAtIndex(e.Position);
+			if (elem != null && elem.LongClick != null)
+				elem.LongClick();
 		}
 	}
 }
