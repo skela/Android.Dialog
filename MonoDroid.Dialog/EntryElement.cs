@@ -81,6 +81,9 @@ namespace MonoDroid.Dialog
 									 Text = Value ?? "",
 								 };
 
+				_entry.ImeOptions = MonoDroidDialogEnumHelper.ImeActionFromUIReturnKeyType(ReturnKeyType);
+				_entry.InputType = MonoDroidDialogEnumHelper.InputTypesFromUIKeyboardType(KeyboardType);
+
 				if(isPassword)
 				{
 					_entry.InputType = Android.Text.InputTypes.TextVariationPassword;
@@ -140,5 +143,31 @@ namespace MonoDroid.Dialog
 		{
 			return (Value != null ? Value.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1 : false) || base.Matches(text);
 		}
+
+		#region MonoTouch Dialog Mimicry
+		
+		public UIKeyboardType KeyboardType
+		{
+			get { return keyboardType; }
+			set { keyboardType = value; }
+		}
+		private UIKeyboardType keyboardType;
+		
+		public UIReturnKeyType ReturnKeyType
+		{
+			get { return returnKeyType; }
+			set { returnKeyType = value; }
+		}
+		private UIReturnKeyType returnKeyType;
+		
+		// Not used in any way, just there to match MT Dialog api.
+		public UITextFieldViewMode ClearButtonMode
+		{
+			get { return clearButtonMode; }
+			set { clearButtonMode = value; }
+		}
+		private UITextFieldViewMode clearButtonMode;
+		
+		#endregion
 	}
 }
