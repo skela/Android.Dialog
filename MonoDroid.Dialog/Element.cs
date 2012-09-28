@@ -4,7 +4,7 @@ using Android.Content;
 
 namespace MonoDroid.Dialog
 {
-    public class Element : IDisposable
+	public class Element : IDisposable
     {
         /// <summary>
         ///  The caption to display for this given element
