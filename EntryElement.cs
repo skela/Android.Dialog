@@ -7,7 +7,7 @@ using Android.Views.InputMethods;
 
 namespace Android.Dialog
 {
-    public class EntryElement : Element, ITextWatcher
+	public class EntryElement : Element, ITextWatcher,View.IOnFocusChangeListener
     {
         public string Value
         {
@@ -78,19 +78,20 @@ namespace Android.Dialog
 
 				_entry.FocusableInTouchMode = true;
 				_entry.Focusable = true;
-				_entry.Clickable = true;					 
+				_entry.Clickable = true;
 
 				// Warning! Crazy ass hack ahead!
                 // since we can't know when out convertedView was was swapped from inside us, we store the
                 // old textwatcher in the tag element so it can be removed!!!! (barf, rech, yucky!)
                 if (_entry.Tag != null)
+				{
                     _entry.RemoveTextChangedListener((ITextWatcher)_entry.Tag);
-
-                _entry.Text = Value;
-                _entry.Hint = Hint;
-                //_entry.EditorAction += new EventHandler<TextView.EditorActionEventArgs>(_entry_EditorAction);
+					_entry.OnFocusChangeListener=null;
+				}
                 
-				//_entry.ImeOptions = ImeAction.Unspecified;
+				_entry.Text = Value;
+                _entry.Hint = Hint;
+
 				switch (ReturnKeyType)
 				{
 					case UIReturnKeyType.Default: _entry.ImeOptions = ImeAction.Unspecified; break;
@@ -130,6 +131,7 @@ namespace Android.Dialog
                 // continuation of crazy ass hack, stash away the listener value so we can look it up later
                 _entry.Tag = this;
                 _entry.AddTextChangedListener(this);
+				_entry.OnFocusChangeListener=this;
                 if (label == null)
                 {
                     _entry.Hint = Caption;
@@ -181,6 +183,38 @@ namespace Android.Dialog
         {
             // nothing needed
         }
+
+		#endregion
+
+		#region Utils
+
+		public void SetCanFocus(View v,bool canFocus)
+		{
+			if (v!=null)
+			{
+				v.FocusableInTouchMode = canFocus;
+				v.Focusable = canFocus;
+				v.Clickable = canFocus;
+			}
+		}
+
+		#endregion
+
+
+		#region Focus Change
+
+		public void OnFocusChange(View v,bool isFocused)
+		{
+			View parent = (View)v.Parent.Parent;
+			if (isFocused)
+			{
+				SetCanFocus(parent,false);
+			}
+			else
+			{
+				SetCanFocus(parent,true);
+			}
+		}
 
 		#endregion
 
