@@ -167,6 +167,14 @@ namespace Android.Dialog
             return Value != null && Value.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1 || base.Matches(text);
         }
 
+		public void SetEnabled(bool enabled)
+		{
+			if (_entry!=null)
+			{
+				_entry.Enabled = enabled;
+			}
+		}
+
 		#region TextWatcher Android
 
         public void OnTextChanged(Java.Lang.ICharSequence s, int start, int before, int count)
