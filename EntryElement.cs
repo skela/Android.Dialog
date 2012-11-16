@@ -211,9 +211,36 @@ namespace Android.Dialog
 
 		#region Focus Change
 
+		//int counter=0;
+		//bool shouldIgnoreSubsequentFocusChanges = false;
+
 		public void OnFocusChange(View v,bool isFocused)
 		{
 			View parent = (View)v.Parent.Parent;
+			/*
+			EditText test = (EditText)v;
+			String str = test.Hint;
+
+			// Hack for focus bug (to avoid it selecting the first list entry the first time a field is selected in a list)
+			if (isFocused && counter==0 && !shouldIgnoreSubsequentFocusChanges)
+			{
+				counter++;
+				shouldIgnoreSubsequentFocusChanges=true;
+			}
+			else
+			{
+				if (shouldIgnoreSubsequentFocusChanges)
+				{
+					counter++;
+					if (counter==3)
+					{
+						shouldIgnoreSubsequentFocusChanges=false;
+					}
+					return;
+				}
+			}
+			*/
+
 			if (isFocused)
 			{
 				SetCanFocus(parent,false);
