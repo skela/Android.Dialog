@@ -4,6 +4,7 @@ using Android.Text;
 using Android.Views;
 using Android.Widget;
 using Android.Views.InputMethods;
+using Android.Util;
 
 namespace Android.Dialog
 {
@@ -80,15 +81,6 @@ namespace Android.Dialog
 				_entry.Focusable = true;
 				_entry.Clickable = true;
 
-				// Warning! Crazy ass hack ahead!
-                // since we can't know when out convertedView was was swapped from inside us, we store the
-                // old textwatcher in the tag element so it can be removed!!!! (barf, rech, yucky!)
-                if (_entry.Tag != null)
-				{
-                    _entry.RemoveTextChangedListener((ITextWatcher)_entry.Tag);
-					_entry.OnFocusChangeListener=null;
-				}
-                
 				_entry.Text = Value;
                 _entry.Hint = Hint;
 
@@ -128,10 +120,19 @@ namespace Android.Dialog
                     _entry.EditorAction += _entry_EditorAction;
                 }
 
-                // continuation of crazy ass hack, stash away the listener value so we can look it up later
-                _entry.Tag = this;
-                _entry.AddTextChangedListener(this);
+				if (_entry.Tag == null)
+                {
+                    _entry.Tag = this;
+                    _entry.AddTextChangedListener(this);
+                }
+                else if (_entry.Tag != this)
+                {
+                    _entry.RemoveTextChangedListener((ITextWatcher)_entry.Tag);
+                    _entry.AddTextChangedListener(this);
+                }
+
 				_entry.OnFocusChangeListener=this;
+
                 if (label == null)
                 {
                     _entry.Hint = Caption;
@@ -140,6 +141,20 @@ namespace Android.Dialog
                 {
                     label.Text = Caption;
                 }
+
+				if (focusedView!=null && focusedView==_entry)
+				{
+					if (!didRequestFocus)
+					{
+						didRequestFocus = true;
+						focusedView.RequestFocus();
+					}
+					else
+					{
+						didRequestFocus = false;
+						focusedView = null;
+					}
+				}
             }
 
             return view;
@@ -156,8 +171,7 @@ namespace Android.Dialog
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
-                //_entry.Dispose();
+            {                
                 _entry = null;
             }
         }
@@ -211,35 +225,24 @@ namespace Android.Dialog
 
 		#region Focus Change
 
-		//int counter=0;
-		//bool shouldIgnoreSubsequentFocusChanges = false;
+		static View focusedView;
+		static bool didRequestFocus = false;
 
 		public void OnFocusChange(View v,bool isFocused)
 		{
 			View parent = (View)v.Parent.Parent;
-			/*
-			EditText test = (EditText)v;
-			String str = test.Hint;
 
-			// Hack for focus bug (to avoid it selecting the first list entry the first time a field is selected in a list)
-			if (isFocused && counter==0 && !shouldIgnoreSubsequentFocusChanges)
+			if (focusedView==null)
 			{
-				counter++;
-				shouldIgnoreSubsequentFocusChanges=true;
-			}
-			else
-			{
-				if (shouldIgnoreSubsequentFocusChanges)
+				if (isFocused)
 				{
-					counter++;
-					if (counter==3)
-					{
-						shouldIgnoreSubsequentFocusChanges=false;
-					}
-					return;
+					focusedView = v;
+					didRequestFocus=false;
 				}
 			}
-			*/
+
+			if (didRequestFocus)
+				return;
 
 			if (isFocused)
 			{
