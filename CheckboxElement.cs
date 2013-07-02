@@ -101,7 +101,7 @@ namespace Android.Dialog
 
         public override void Selected()
         {
-            if (!ReadOnly)
+			if (!ReadOnly && _checkbox!=null)
                 _checkbox.Toggle();
         }
 
